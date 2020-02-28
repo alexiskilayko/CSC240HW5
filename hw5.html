@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bezier Curves</title>
+
+<script>
+    var canvas;    // DOM object corresponding to the canvas
+    var graphics;  // 2D graphics context for drawing on the canvas
+    var numPoints;
+    var bgcolor = 'white';
+
+    function bezierLineHelper(t, p0, p1) {
+        var x = (1-t)*(p0[0]) + t*(p1[0]);
+        var y = (1-t)*(p0[1]) + t*(p1[1]);
+        var p = [x, y];
+        return p;
+    }
+
+    function bezierLine(p0, p1) {
+        numPoints = Math.floor(Math.sqrt(Math.pow(p1[0]-p0[0], 2) + Math.pow(p1[1]-p0[1], 2)));
+        for (i = 0; i < numPoints+1; i++) {
+          nextp = bezierLineHelper(i/numPoints, p0, p1);
+          graphics.lineTo(nextp[0], nextp[1]);
+        }
+    }
+
+    function bezierQuadHelper(t, p0, p1, p2) {
+        var firstp = bezierLineHelper(t, p0, p1);
+        var secondp = bezierLineHelper(t, p1, p2);
+        var p = bezierLineHelper(t, firstp, secondp);
+        return p;
+    }
+
+    function bezierQuad(p0, p1, p2) {
+        numPoints = Math.floor(Math.sqrt(Math.pow(p1[0]-p0[0], 2) + Math.pow(p1[1]-p0[1], 2)) +
+                              Math.sqrt(Math.pow(p2[0]-p1[0], 2) + Math.pow(p2[1]-p1[1], 2)));
+        for (i = 0; i < numPoints; i++) {
+          nextp = bezierQuadHelper(i/numPoints, p0, p1, p2);
+          graphics.lineTo(nextp[0], nextp[1]);
+        }
+    }
+
+    function bezierCubicHelper(t, p0, p1, p2, p3) {
+        var firstp = bezierLineHelper(t, p0, p1);
+        var secondp = bezierLineHelper(t, p1, p2);
+        var thirdp = bezierLineHelper(t, p2, p3);
+        var p = bezierQuadHelper(t, firstp, secondp, thirdp);
+        return p;
+    }
+
+    function bezierCubic(p0, p1, p2, p3) {
+        numPoints = Math.floor(Math.sqrt(Math.pow(p1[0]-p0[0], 2) + Math.pow(p1[1]-p0[1], 2)) +
+                              Math.sqrt(Math.pow(p2[0]-p1[0], 2) + Math.pow(p2[1]-p1[1], 2)) +
+                              Math.sqrt(Math.pow(p3[0]-p2[0], 2) + Math.pow(p3[1]-p2[1], 2)));
+        for (i = 0; i < numPoints+1; i++) {
+          nextp = bezierCubicHelper(i/numPoints, p0, p1, p2, p3);
+          graphics.lineTo(nextp[0], nextp[1]);
+        }
+    }
+
+    function letterA() {
+        var a0 = [30, 200];
+        var a1 = [65, 0];
+        var a2 = [100, 200];
+
+        var a3 = [50, 200];
+        var a4 = [65, 130];
+        var a5 = [80, 200];
+
+        var a6 = [30, 200];
+        var a7 = [50, 200];
+
+        var a8 = [80, 200];
+        var a9 = [100, 200];
+
+        var aH1 = [58, 145];
+        var aH2 = [65, 115];
+        var aH3 = [72, 145];
+
+        graphics.beginPath();
+        graphics.moveTo(a0[0], a0[1]);
+        bezierQuad(a0, a1, a2);
+        bezierLine(a2, a8);
+        bezierQuad(a5, a4, a3);
+        bezierLine(a7, a6);
+        graphics.closePath();
+        graphics.stroke();
+        graphics.fillStyle = 'lightcoral';
+        graphics.fill();
+
+        graphics.beginPath();
+        graphics.moveTo(aH1[0], aH1[1]);
+        bezierQuad(aH1, aH2, aH3);
+        graphics.closePath();
+        graphics.stroke();
+        graphics.fillStyle = bgcolor;
+        graphics.fill();
+    }
+
+    function letterL() {
+        var l0 = [110, 100];
+        var l1 = [110, 200];
+        var l2 = [170, 200];
+        var l3 = [170, 180];
+        var l4 = [130, 180];
+        var l5 = [130, 100];
+        var l6 = [110, 100];
+
+        graphics.beginPath();
+        graphics.moveTo(l0[0], l0[1]);
+        bezierLine(l0, l1);
+        bezierLine(l1, l2);
+        bezierLine(l2, l3);
+        bezierLine(l3, l4);
+        bezierLine(l4, l5);
+        bezierLine(l5, l0);
+        graphics.closePath();
+        graphics.stroke();
+        graphics.fillStyle = 'lightsalmon';
+        graphics.fill();
+    }
+
+    function letterE() {
+        var e0 = [235, 100];
+        var e1 = [165, 100];
+        var e2 = [165, 150];
+        var e3 = [210, 150];
+
+        var e4 = [210, 150];
+        var e5 = [165, 150];
+        var e6 = [165, 200];
+        var e7 = [235, 200];
+
+        var e8 = [235, 180];
+        var e9 = [200, 180];
+        var e10 = [200, 160];
+        var e11 = [235, 160];
+
+        var e12 = [235, 140];
+        var e13 = [200, 140];
+        var e14 = [200, 120];
+        var e15 = [235, 120];
+
+        graphics.beginPath();
+        graphics.moveTo(e0[0], e0[1]);
+        bezierCubic(e0, e1, e2, e3);
+        bezierCubic(e4, e5, e6, e7);
+        bezierLine(e7, e8);
+        bezierCubic(e8, e9, e10, e11);
+        bezierLine(e11, e12);
+        bezierCubic(e12, e13, e14, e15);
+        bezierLine(e15, e0);
+        graphics.stroke();
+        graphics.fillStyle = 'lightseagreen';
+        graphics.fill();
+    }
+
+    function letterX() {
+        var x0 = [245, 100];
+        var x1 = [275, 150];
+        var x2 = [245, 200];
+        var x3 = [265, 200];
+        var x4 = [285, 170];
+        var x5 = [305, 200];
+        var x6 = [325, 200];
+        var x7 = [295, 150];
+        var x8 = [325, 100];
+        var x9 = [305, 100];
+        var x10 = [285, 130];
+        var x11 = [265, 100];
+
+        graphics.beginPath();
+        graphics.moveTo(x0[0], x0[1]);
+        bezierLine(x0, x1);
+        bezierLine(x1, x2);
+        bezierLine(x2, x3);
+        bezierLine(x3, x4);
+        bezierLine(x4, x5);
+        bezierLine(x5, x6);
+        bezierLine(x6, x7);
+        bezierLine(x7, x8);
+        bezierLine(x8, x9);
+        bezierLine(x9, x10);
+        bezierLine(x10, x11);
+        graphics.closePath();
+        graphics.stroke();
+        graphics.fillStyle = 'lightskyblue';
+        graphics.fill();
+    }
+
+    function letterI() {
+        var i0 = [335, 100];
+        var i1 = [335, 200];
+        var i2 = [355, 200];
+        var i3 = [355, 100];
+
+        graphics.beginPath();
+        graphics.moveTo(i0[0], i0[1]);
+        bezierLine(i0, i1);
+        bezierLine(i1, i2);
+        bezierLine(i2, i3);
+        bezierLine(i3, i0);
+        graphics.closePath();
+        graphics.stroke();
+        graphics.fillStyle = 'powderblue';
+        graphics.fill();
+    }
+
+    function letterS() {
+        var s0 = [425, 100];
+        var s1 = [355, 100];
+        var s2 = [355, 150];
+        var s3 = [395, 150];
+
+        var s4 = [425, 150];
+        var s5 = [425, 180];
+        var s6 = [375, 180];
+
+        var s7 = [375, 200];
+
+        var s8 = [455, 200];
+        var s9 = [455, 135];
+        var s10 = [400, 130];
+
+        var s11 = [385, 130];
+        var s12 = [385, 120];
+        var s13 = [425, 120];
+
+        graphics.beginPath();
+        graphics.moveTo(s0[0], s0[1]);
+        bezierCubic(s0, s1, s2, s3);
+        bezierCubic(s3, s4, s5, s6);
+        bezierLine(s6, s7);
+        bezierCubic(s7, s8, s9, s10);
+        bezierCubic(s10, s11, s12, s13);
+        bezierLine(s13, s0);
+        graphics.stroke();
+        graphics.fillStyle = 'salmon';
+        graphics.fill();
+    }
+
+    function drawDemo() {
+        // set up control points
+        var p0 = [200, 110];
+        var p1 = [200, 300];
+
+        var r1 = [30, 50];
+
+        var q1 = [300,50];
+        var q2 = [330,140];
+
+        // draw 3 bezier curves, all starting at p0 and ending at p1
+        graphics.beginPath();
+        graphics.moveTo(p0[0], p1[1]);
+        bezierLine(p0, p1);
+        bezierQuad(p0, r1, p1);
+        bezierCubic(p0, q1, q2, p1);
+        graphics.stroke();
+        graphics.fill();
+        // notice the difference between the quadratic and cubic curves
+    }
+
+    function init() {
+        canvas = document.getElementById("theCanvas");
+        graphics = canvas.getContext("2d");
+        // drawDemo();  // draw something on the canvas
+        letterA();
+        letterL();
+        letterE();
+        letterX();
+        letterI();
+        letterS();
+    }
+</script>
+
+
+</head>
+<body onload="init()">
+    <canvas id="theCanvas" width="640" height="480"></canvas>
+</body>
+</html>
